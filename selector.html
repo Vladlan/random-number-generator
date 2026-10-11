@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remaining Number Selector</title>
+  <title>Selection Analyzer</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; }
@@ -281,13 +281,6 @@
       color: #94a3b8;
       padding: 26px 16px;
     }
-    .status {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #64748b;
-      margin-top: 12px;
-      min-height: 24px;
-    }
     @media (max-width: 800px) {
       .grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr; }
@@ -311,7 +304,7 @@
       <div class="card">
         <div class="display-box">
           <div class="display-label">Selection Process</div>
-          
+
           <div class="selections-row">
             <div class="selection-item">
               <span class="selection-label">First Pick</span>
@@ -335,7 +328,6 @@
           </div>
 
           <button class="btn btn-primary" id="pickBtn">Run Selection</button>
-          <div class="status" id="status"></div>
         </div>
       </div>
 
@@ -347,12 +339,12 @@
             <span class="stat-label">Total Rounds</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="leftCount">-</span>
-            <span class="stat-label">Numbers Left</span>
+            <span class="stat-value" id="currentLeft">-</span>
+            <span class="stat-label">Last Left</span>
           </div>
           <div class="stat-card">
             <span class="stat-value" id="selectedCount">0</span>
-            <span class="stat-label">Selected</span>
+            <span class="stat-label">Total Picked</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="leftChart"></canvas></div>
@@ -430,28 +422,20 @@
       isRunning = true;
 
       const numbers = [1, 2, 3];
-      
-      // First pick from 3 numbers
+
       const firstIdx = Math.floor(Math.random() * 3);
       const first = numbers[firstIdx];
-      
-      // Second pick from remaining 2 numbers
+
       const remaining = numbers.filter(n => n !== first);
       const secondIdx = Math.floor(Math.random() * 2);
       const second = remaining[secondIdx];
-      
-      // The left number is the one not picked
+
       const left = remaining.filter(n => n !== second)[0];
 
-      // Display with animation
       displayNumbers(first, second, left);
-      
-      // Save to database
       await addRound(first, second, left);
-      
-      // Update UI
       await updateUI();
-      
+
       setTimeout(() => {
         isRunning = false;
       }, 500);
@@ -464,7 +448,6 @@
 
       firstEl.textContent = first;
       firstEl.classList.add('pulse');
-      
       setTimeout(() => {
         secondEl.textContent = second;
         secondEl.classList.add('pulse');
@@ -488,6 +471,7 @@
         list.innerHTML = '<div class="empty-state">No rounds yet. Click "Run Selection" to start!</div>';
         return;
       }
+
       list.innerHTML = rounds.slice().reverse().map(r => {
         const t = new Date(r.timestamp);
         return `
@@ -498,7 +482,7 @@
               <span class="badge" style="background: #d1d5db; color: #374151;">${r.left}</span>
               <div class="history-text">
                 <div class="history-selected">Picked: ${r.first} → ${r.second}</div>
-                <div class="history-left">Left: ${r.left}</div>
+                <div class="history-left">Left behind: ${r.left}</div>
               </div>
             </div>
             <span class="time">${t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -513,12 +497,11 @@
 
       document.getElementById('totalRounds').textContent = rounds.length;
       document.getElementById('selectedCount').textContent = rounds.length * 2;
-      
-      // Show the most recent "left" number or "-" if no rounds
+
       if (rounds.length > 0) {
-        document.getElementById('leftCount').textContent = rounds[rounds.length - 1].left;
+        document.getElementById('currentLeft').textContent = rounds[rounds.length - 1].left;
       } else {
-        document.getElementById('leftCount').textContent = '-';
+        document.getElementById('currentLeft').textContent = '-';
       }
 
       const ctx = document.getElementById('leftChart');
@@ -532,7 +515,7 @@
         chart = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['Left #1', 'Left #2', 'Left #3'],
+            labels: ['#1 Left', '#2 Left', '#3 Left'],
             datasets: [{
               label: 'Times Left Behind',
               data,
@@ -569,7 +552,6 @@
       document.getElementById('firstNumber').textContent = '-';
       document.getElementById('secondNumber').textContent = '-';
       document.getElementById('leftNumber').textContent = '-';
-      document.getElementById('status').textContent = '';
       await updateUI();
     }
 
