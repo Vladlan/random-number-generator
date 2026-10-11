@@ -6,419 +6,525 @@
   <title>Remaining Number Selector</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --bg1: #0f172a;
-      --bg2: #1e293b;
-      --panel: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --primary: #2563eb;
-      --purple: #7c3aed;
-      --success: #10b981;
-      --soft: #f8fafc;
-      --line: #e2e8f0;
-      --shadow: rgba(15, 23, 42, 0.18);
-    }
-
     * { box-sizing: border-box; }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #0f172a;
       padding: 24px;
     }
-
-    .app {
-      width: min(1100px, 100%);
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
     }
-
-    .header {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
-
     h1 {
       margin: 0;
-      color: white;
-      font-size: clamp(1.8rem, 2.5vw, 3rem);
+      font-size: clamp(2rem, 3vw, 3rem);
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-
-    .btn:hover { transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--purple));
-      color: white;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid #e2e8f0;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 24px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .pick-box {
+    .nav {
       display: flex;
-      flex-direction: column;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: white;
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .nav a.active {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .display-box {
       min-height: 340px;
-      background: linear-gradient(135deg, #f8fafc, #eef2ff);
-      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
+      border-radius: 12px;
       padding: 24px;
     }
-
-    .label {
-      font-size: 0.9rem;
-      letter-spacing: 0.08em;
+    .display-label {
       text-transform: uppercase;
-      color: var(--muted);
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: #64748b;
       font-weight: 700;
       margin-bottom: 12px;
     }
-
-    .selected-number {
-      font-size: clamp(4rem, 10vw, 8rem);
-      font-weight: 900;
-      color: var(--primary);
-      min-height: 130px;
+    .selections-row {
       display: flex;
-      align-items: center;
       justify-content: center;
-      margin: 12px 0 18px;
-      transition: transform 0.2s ease;
-    }
-
-    .selected-number.pulse { transform: scale(1.12); }
-
-    .remaining-wrap {
-      margin-top: 16px;
-      display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 16px;
+      margin: 12px 0;
+      min-height: 100px;
       flex-wrap: wrap;
-      gap: 10px;
-      width: 100%;
     }
-
+    .selection-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .selection-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .display-number {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #2563eb;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: #dbeafe;
+    }
+    .display-number.pulse {
+      animation: pulse 0.25s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .arrow {
+      font-size: 1.5rem;
+      color: #64748b;
+      font-weight: 700;
+    }
+    .remaining-box {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .remaining-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .remaining-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
     .chip {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 54px;
-      padding: 12px 14px;
-      border-radius: 12px;
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
       background: #dbeafe;
       color: #1d4ed8;
       font-weight: 800;
       font-size: 1.2rem;
     }
-
     .chip.empty {
       background: #f1f5f9;
-      color: var(--muted);
-      min-width: 150px;
+      color: #94a3b8;
+      width: auto;
+      padding: 12px 14px;
     }
-
-    .stats {
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 14px 22px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.15s ease;
+      margin-top: 20px;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+    .btn-secondary {
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #0f172a;
+    }
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
       margin-bottom: 18px;
     }
-
-    .stat-box {
+    .stat-card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 14px;
+      border-radius: 10px;
       padding: 14px 12px;
       text-align: center;
     }
-
     .stat-value {
-      font-size: 1.8rem;
-      font-weight: 900;
-      color: var(--primary);
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #3b82f6;
     }
-
-    .stat-name {
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 0.8rem;
+    .stat-label {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      color: #64748b;
+      font-weight: 700;
     }
-
-    .chart-box {
-      height: 260px;
-      margin-top: 16px;
-    }
-
-    .history-list {
-      max-height: 320px;
+    .chart-wrap { height: 220px; }
+    .history-box {
+      max-height: 280px;
       overflow-y: auto;
-      margin-top: 14px;
-      border-radius: 12px;
       background: #f8fafc;
-      border: 1px solid var(--line);
-      padding: 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
     }
-
     .history-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
       padding: 12px 10px;
-      border-bottom: 1px solid var(--line);
-      font-size: 0.96rem;
+      border-bottom: 1px solid #e2e8f0;
     }
-
     .history-item:last-child { border-bottom: none; }
-
-    .history-left {
+    .history-content {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
-
     .badge {
-      background: #e0e7ff;
-      color: #3730a3;
-      border-radius: 10px;
-      min-width: 32px;
-      height: 32px;
       display: inline-flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #dbeafe;
+      color: #1d4ed8;
       font-weight: 800;
+      font-size: 0.9rem;
     }
-
-    .history-time {
-      color: var(--muted);
+    .history-text {
+      text-align: left;
+    }
+    .history-selected {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .history-left {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .time {
+      color: #64748b;
       font-size: 0.8rem;
       white-space: nowrap;
     }
-
-    .empty-state {
-      padding: 26px 16px;
-      color: var(--muted);
-      text-align: center;
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
     }
-
-    @media (max-width: 820px) {
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 26px 16px;
+    }
+    .status {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 12px;
+      min-height: 24px;
+    }
+    @media (max-width: 800px) {
       .grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .selections-row { gap: 12px; }
+      .display-number { width: 60px; height: 60px; font-size: 2.5rem; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="header">
-      <h1>Remaining Number Selector</h1>
-      <button class="btn btn-secondary" id="resetBtn">Reset Current Round</button>
-    </div>
+  <div class="container">
+    <header>
+      <h1>🎲 Selection Analyzer</h1>
+      <nav class="nav">
+        <a href="index.html">Combined</a>
+        <a href="random.html">Random Only</a>
+        <a href="selector.html" class="active">Selection Only</a>
+      </nav>
+    </header>
 
     <div class="grid">
-      <div class="panel">
-        <div class="pick-box">
-          <div class="label">Selected</div>
-          <div class="selected-number" id="selectedNumber">—</div>
-
-          <button class="btn btn-primary" id="pickBtn">Select a Number</button>
-
-          <div class="remaining-wrap">
-            <div class="label" style="margin: 18px 0 0; width: 100%;">Remaining</div>
-            <div id="remainingNumbers"></div>
+      <div class="card">
+        <div class="display-box">
+          <div class="display-label">Selection Process</div>
+          
+          <div class="selections-row">
+            <div class="selection-item">
+              <span class="selection-label">First Pick</span>
+              <div class="display-number" id="firstNumber">-</div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="selection-item">
+              <span class="selection-label">Second Pick</span>
+              <div class="display-number" id="secondNumber">-</div>
+            </div>
+            <span class="arrow">→</span>
+            <div class="selection-item">
+              <span class="selection-label">Left Behind</span>
+              <div class="display-number" id="leftNumber">-</div>
+            </div>
           </div>
+
+          <div class="remaining-box">
+            <span class="remaining-label">Available for next round</span>
+            <div class="remaining-numbers" id="remainingNumbers"></div>
+          </div>
+
+          <button class="btn btn-primary" id="pickBtn">Run Selection</button>
+          <div class="status" id="status"></div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="stats">
-          <div class="stat-box">
-            <div class="stat-value" id="totalSelections">0</div>
-            <div class="stat-name">Selections</div>
+      <div class="card">
+        <h2>Analytics</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="totalRounds">0</span>
+            <span class="stat-label">Total Rounds</span>
           </div>
-          <div class="stat-box">
-            <div class="stat-value" id="currentRound">0</div>
-            <div class="stat-name">This Round</div>
+          <div class="stat-card">
+            <span class="stat-value" id="leftCount">-</span>
+            <span class="stat-label">Numbers Left</span>
           </div>
-          <div class="stat-box">
-            <div class="stat-value" id="leftCount">3</div>
-            <div class="stat-name">Left</div>
+          <div class="stat-card">
+            <span class="stat-value" id="selectedCount">0</span>
+            <span class="stat-label">Selected</span>
           </div>
         </div>
-
-        <div class="chart-box">
-          <canvas id="analyticsChart"></canvas>
-        </div>
+        <div class="chart-wrap"><canvas id="leftChart"></canvas></div>
       </div>
     </div>
 
-    <div class="panel" style="margin-top: 24px;">
-      <div class="label">History</div>
-      <div class="history-list" id="historyList"></div>
+    <div class="card">
+      <h2>Round History</h2>
+      <div class="history-box" id="historyList">
+        <div class="empty-state">No rounds yet. Click "Run Selection" to start!</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="resetAll()">New Analysis</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const DB_NAME = 'RemainingNumberSelectorDB';
-    const SELECTION_STORE = 'selections';
-    const ROUND_STORE = 'currentRound';
-
+    const DB_NAME = 'SelectionAnalyzerDB';
+    const STORE = 'rounds';
     let db;
     let chart;
-    let remaining = [1, 2, 3];
-    let currentSelected = null;
+    let isRunning = false;
 
-    function openDB() {
+    function initDB() {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
-
         request.onupgradeneeded = (event) => {
           const database = event.target.result;
-          if (!database.objectStoreNames.contains(SELECTION_STORE)) {
-            database.createObjectStore(SELECTION_STORE, { keyPath: 'id', autoIncrement: true });
-          }
-          if (!database.objectStoreNames.contains(ROUND_STORE)) {
-            database.createObjectStore(ROUND_STORE, { keyPath: 'key' });
+          if (!database.objectStoreNames.contains(STORE)) {
+            database.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
           }
         };
-
         request.onsuccess = () => {
           db = request.result;
           resolve();
         };
-
         request.onerror = () => reject(request.error);
       });
     }
 
-    function saveSelection(selected, remainingAfter) {
+    function addRound(first, second, left) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(SELECTION_STORE, 'readwrite');
-        const store = tx.objectStore(SELECTION_STORE);
-        const record = {
-          selected,
-          remainingAfter: remainingAfter.slice(),
-          timestamp: new Date().toISOString()
-        };
-
-        const request = store.add(record);
-        request.onsuccess = () => resolve(record);
-        request.onerror = () => reject(request.error);
+        const tx = db.transaction([STORE], 'readwrite');
+        const store = tx.objectStore(STORE);
+        const record = { first, second, left, timestamp: new Date().toISOString() };
+        const req = store.add(record);
+        req.onsuccess = () => resolve(record);
+        req.onerror = () => reject(req.error);
       });
     }
 
-    function saveRoundState() {
+    function getAllRounds() {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(ROUND_STORE, 'readwrite');
-        const store = tx.objectStore(ROUND_STORE);
-        const request = store.put({ key: 'currentState', remaining: remaining.slice() });
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
+        const tx = db.transaction([STORE], 'readonly');
+        const store = tx.objectStore(STORE);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
       });
     }
 
-    function loadRoundState() {
+    function clearAllRounds() {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(ROUND_STORE, 'readonly');
-        const store = tx.objectStore(ROUND_STORE);
-        const request = store.get('currentState');
-        request.onsuccess = () => resolve(request.result ? request.result.remaining : [1, 2, 3]);
-        request.onerror = () => reject(request.error);
+        const tx = db.transaction([STORE], 'readwrite');
+        const store = tx.objectStore(STORE);
+        const req = store.clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
       });
     }
 
-    function getAllSelections() {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(SELECTION_STORE, 'readonly');
-        const store = tx.objectStore(SELECTION_STORE);
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
-      });
+    async function runSelection() {
+      if (isRunning) return;
+      isRunning = true;
+
+      const numbers = [1, 2, 3];
+      
+      // First pick from 3 numbers
+      const firstIdx = Math.floor(Math.random() * 3);
+      const first = numbers[firstIdx];
+      
+      // Second pick from remaining 2 numbers
+      const remaining = numbers.filter(n => n !== first);
+      const secondIdx = Math.floor(Math.random() * 2);
+      const second = remaining[secondIdx];
+      
+      // The left number is the one not picked
+      const left = remaining.filter(n => n !== second)[0];
+
+      // Display with animation
+      displayNumbers(first, second, left);
+      
+      // Save to database
+      await addRound(first, second, left);
+      
+      // Update UI
+      await updateUI();
+      
+      setTimeout(() => {
+        isRunning = false;
+      }, 500);
     }
 
-    function clearCurrentRound() {
-      remaining = [1, 2, 3];
-      currentSelected = null;
-      return saveRoundState();
+    function displayNumbers(first, second, left) {
+      const firstEl = document.getElementById('firstNumber');
+      const secondEl = document.getElementById('secondNumber');
+      const leftEl = document.getElementById('leftNumber');
+
+      firstEl.textContent = first;
+      firstEl.classList.add('pulse');
+      
+      setTimeout(() => {
+        secondEl.textContent = second;
+        secondEl.classList.add('pulse');
+      }, 150);
+
+      setTimeout(() => {
+        leftEl.textContent = left;
+        leftEl.classList.add('pulse');
+      }, 300);
+
+      setTimeout(() => {
+        firstEl.classList.remove('pulse');
+        secondEl.classList.remove('pulse');
+        leftEl.classList.remove('pulse');
+      }, 500);
     }
 
-    function renderRemaining() {
-      const el = document.getElementById('remainingNumbers');
-      if (!remaining.length) {
-        el.innerHTML = '<span class="chip empty">No numbers left</span>';
+    function renderHistory(rounds) {
+      const list = document.getElementById('historyList');
+      if (!rounds.length) {
+        list.innerHTML = '<div class="empty-state">No rounds yet. Click "Run Selection" to start!</div>';
         return;
       }
-      el.innerHTML = remaining.map(n => `<span class="chip">${n}</span>`).join('');
+      list.innerHTML = rounds.slice().reverse().map(r => {
+        const t = new Date(r.timestamp);
+        return `
+          <div class="history-item">
+            <div class="history-content">
+              <span class="badge">${r.first}</span>
+              <span class="badge" style="background: #fce7f3; color: #be185d;">${r.second}</span>
+              <span class="badge" style="background: #d1d5db; color: #374151;">${r.left}</span>
+              <div class="history-text">
+                <div class="history-selected">Picked: ${r.first} → ${r.second}</div>
+                <div class="history-left">Left: ${r.left}</div>
+              </div>
+            </div>
+            <span class="time">${t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        `;
+      }).join('');
     }
 
-    function renderSelected() {
-      const el = document.getElementById('selectedNumber');
-      if (currentSelected === null) {
-        el.textContent = '—';
-        el.classList.remove('pulse');
-        return;
+    function renderStats(rounds) {
+      const leftCounts = { 1: 0, 2: 0, 3: 0 };
+      rounds.forEach(r => leftCounts[r.left]++);
+
+      document.getElementById('totalRounds').textContent = rounds.length;
+      document.getElementById('selectedCount').textContent = rounds.length * 2;
+      
+      // Show the most recent "left" number or "-" if no rounds
+      if (rounds.length > 0) {
+        document.getElementById('leftCount').textContent = rounds[rounds.length - 1].left;
+      } else {
+        document.getElementById('leftCount').textContent = '-';
       }
-      el.textContent = currentSelected;
-      el.classList.remove('pulse');
-      void el.offsetWidth;
-      el.classList.add('pulse');
-    }
 
-    function renderStats(history) {
-      const counts = { 1: 0, 2: 0, 3: 0 };
-      history.forEach(item => counts[item.selected]++);
+      const ctx = document.getElementById('leftChart');
+      if (!ctx) return;
 
-      document.getElementById('totalSelections').textContent = history.length;
-      document.getElementById('currentRound').textContent = remaining.length === 0 ? 0 : (3 - remaining.length);
-      document.getElementById('leftCount').textContent = remaining.length;
-
-      const ctx = document.getElementById('analyticsChart').getContext('2d');
-      const data = [counts[1], counts[2], counts[3]];
-
+      const data = [leftCounts[1], leftCounts[2], leftCounts[3]];
       if (chart) {
         chart.data.datasets[0].data = data;
         chart.update();
@@ -426,100 +532,56 @@
         chart = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['1', '2', '3'],
+            labels: ['Left #1', 'Left #2', 'Left #3'],
             datasets: [{
-              label: 'All-time selections',
+              label: 'Times Left Behind',
               data,
-              backgroundColor: ['#60a5fa', '#a78bfa', '#34d399'],
-              borderRadius: 10
+              backgroundColor: ['#60a5fa', '#a78bfa', '#ec4899'],
+              borderRadius: 8,
+              borderSkipped: false
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
-            scales: {
-              y: { beginAtZero: true, ticks: { stepSize: 1 } }
-            }
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
           }
         });
       }
     }
 
-    function renderHistory(history) {
-      const list = document.getElementById('historyList');
-      if (!history.length) {
-        list.innerHTML = '<div class="empty-state">No selections yet.</div>';
-        return;
-      }
-
-      list.innerHTML = history
-        .slice()
-        .reverse()
-        .map(item => {
-          const date = new Date(item.timestamp);
-          const leftText = item.remainingAfter.length ? item.remainingAfter.join(', ') : 'None left';
-          return `
-            <div class="history-item">
-              <div class="history-left">
-                <span class="badge">${item.selected}</span>
-                <div>
-                  <div>Selected: <strong>${item.selected}</strong></div>
-                  <div style="color: var(--muted); font-size: 0.8rem;">Left: ${leftText}</div>
-                </div>
-              </div>
-              <div class="history-time">${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-            </div>
-          `;
-        })
-        .join('');
+    function renderRemaining() {
+      const el = document.getElementById('remainingNumbers');
+      el.innerHTML = '<span class="chip">1</span><span class="chip">2</span><span class="chip">3</span>';
     }
 
-    async function refreshUI() {
-      const history = await getAllSelections();
+    async function updateUI() {
+      const rounds = await getAllRounds();
+      renderHistory(rounds);
+      renderStats(rounds);
       renderRemaining();
-      renderSelected();
-      renderStats(history);
-      renderHistory(history);
     }
 
-    async function pickNumber() {
-      if (remaining.length === 0) {
-        currentSelected = null;
-        renderSelected();
-        alert('All numbers used. Reset the round to start again.');
-        return;
-      }
-
-      const index = Math.floor(Math.random() * remaining.length);
-      const chosen = remaining[index];
-      currentSelected = chosen;
-
-      const remainingAfter = remaining.filter(n => n !== chosen);
-      remaining = remainingAfter;
-
-      await saveSelection(chosen, remainingAfter);
-      await saveRoundState();
-      await refreshUI();
+    async function resetAll() {
+      if (!confirm('Clear all round history?')) return;
+      await clearAllRounds();
+      document.getElementById('firstNumber').textContent = '-';
+      document.getElementById('secondNumber').textContent = '-';
+      document.getElementById('leftNumber').textContent = '-';
+      document.getElementById('status').textContent = '';
+      await updateUI();
     }
 
-    async function resetRound() {
-      await clearCurrentRound();
-      await refreshUI();
-    }
-
-    document.getElementById('pickBtn').addEventListener('click', pickNumber);
-    document.getElementById('resetBtn').addEventListener('click', resetRound);
+    document.getElementById('pickBtn').addEventListener('click', runSelection);
 
     window.addEventListener('load', async () => {
       try {
-        await openDB();
-        const saved = await loadRoundState();
-        remaining = saved || [1, 2, 3];
-        await refreshUI();
+        await initDB();
+        await updateUI();
       } catch (error) {
-        console.error('DB init error:', error);
-        alert('IndexedDB is not available in this browser.');
+        console.error(error);
+        alert('IndexedDB not supported in this browser.');
       }
     });
   </script>
