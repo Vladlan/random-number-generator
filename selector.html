@@ -332,19 +332,19 @@
       </div>
 
       <div class="card">
-        <h2>Analytics - Left Behind</h2>
-        <div class="stats-grid">
+        <h2>Count Digits Left Behind</h2>
+        <div class="stats-grid" id="leftBehindStats">
           <div class="stat-card">
-            <span class="stat-value" id="totalRounds">0</span>
-            <span class="stat-label">Total Rounds</span>
+            <span class="stat-value" id="count1">0</span>
+            <span class="stat-label">Digit 1</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="currentLeft">-</span>
-            <span class="stat-label">Last Left</span>
+            <span class="stat-value" id="count2">0</span>
+            <span class="stat-label">Digit 2</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="mostLeft">-</span>
-            <span class="stat-label">Most Left</span>
+            <span class="stat-value" id="count3">0</span>
+            <span class="stat-label">Digit 3</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="leftChart"></canvas></div>
@@ -495,20 +495,10 @@
       const leftCounts = { 1: 0, 2: 0, 3: 0 };
       rounds.forEach(r => leftCounts[r.left]++);
 
-      document.getElementById('totalRounds').textContent = rounds.length;
-
-      if (rounds.length > 0) {
-        document.getElementById('currentLeft').textContent = rounds[rounds.length - 1].left;
-      } else {
-        document.getElementById('currentLeft').textContent = '-';
-      }
-
-      // Find most left behind
-      const mostLeftNum = Object.keys(leftCounts).reduce((a, b) => 
-        leftCounts[a] > leftCounts[b] ? a : b
-      );
-      const mostLeftCount = leftCounts[mostLeftNum];
-      document.getElementById('mostLeft').textContent = mostLeftCount > 0 ? mostLeftNum : '-';
+      // Update count values
+      document.getElementById('count1').textContent = leftCounts[1];
+      document.getElementById('count2').textContent = leftCounts[2];
+      document.getElementById('count3').textContent = leftCounts[3];
 
       const ctx = document.getElementById('leftChart');
       if (!ctx) return;
@@ -521,7 +511,7 @@
         chart = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: ['#1 Left', '#2 Left', '#3 Left'],
+            labels: ['Digit 1', 'Digit 2', 'Digit 3'],
             datasets: [{
               label: 'Times Left Behind',
               data,
