@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Number Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #0f172a;
+      padding: 24px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 3vw, 3rem);
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: white;
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .nav a.active {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    .display-box {
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .display-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .display-number {
+      font-size: clamp(4rem, 9vw, 7rem);
+      font-weight: 900;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+    }
+    .display-number.pulse {
+      animation: pulse 0.25s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 14px 22px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: transform 0.15s ease;
+      margin-top: 16px;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+    .btn-secondary {
+      background: white;
+      border: 1px solid #e2e8f0;
+      color: #0f172a;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .stat-value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #3b82f6;
+    }
+    .stat-label {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748b;
+      font-weight: 700;
+    }
+    .chart-wrap { height: 220px; }
+    .history-box {
+      max-height: 280px;
+      overflow-y: auto;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .history-item:last-child { border-bottom: none; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 800;
+    }
+    .time {
+      color: #64748b;
+      font-size: 0.8rem;
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .empty-state {
+      text-align: center;
+      color: #94a3b8;
+      padding: 26px 16px;
+    }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎲 Random Number Generator</h1>
+      <nav class="nav">
+        <a href="index.html" class="active">Combined</a>
+        <a href="random.html">Random Only</a>
+        <a href="selector.html">Selection Only</a>
+      </nav>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="display-box">
+          <div class="display-label">Generate</div>
+          <div class="display-number" id="randomNumber">-</div>
+          <button class="btn btn-primary" id="generateBtn">Generate Number</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="count1">0</span>
+            <span class="stat-label">Number 1</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="count2">0</span>
+            <span class="stat-label">Number 2</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="count3">0</span>
+            <span class="stat-label">Number 3</span>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="statsChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Generation History</h2>
+      <div class="history-box" id="logList">
+        <div class="empty-state">No generations yet. Click the button to start!</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="exportData()">Export Data</button>
+        <button class="btn btn-secondary" onclick="clearData()">Clear History</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DB_NAME = 'NumberGeneratorDB';
+    const STORE = 'generations';
+    let db;
+    let chart;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = (event) => {
+          const database = event.target.result;
+          if (!database.objectStoreNames.contains(STORE)) {
+            database.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        request.onsuccess = () => {
+          db = request.result;
+          resolve();
+        };
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function addGeneration(number) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction([STORE], 'readwrite');
+        const store = tx.objectStore(STORE);
+        const record = { number, timestamp: new Date().toISOString() };
+        const req = store.add(record);
+        req.onsuccess = () => resolve(record);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function getAllGenerations() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction([STORE], 'readonly');
+        const store = tx.objectStore(STORE);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function clearAllData() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction([STORE], 'readwrite');
+        const store = tx.objectStore(STORE);
+        const req = store.clear();
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function generateNumber() {
+      const number = Math.floor(Math.random() * 3) + 1;
+      const display = document.getElementById('randomNumber');
+      display.textContent = number;
+      display.classList.remove('pulse');
+      void display.offsetWidth;
+      display.classList.add('pulse');
+      await addGeneration(number);
+      await updateUI();
+    }
+
+    function renderHistory(generations) {
+      const list = document.getElementById('logList');
+      if (!generations.length) {
+        list.innerHTML = '<div class="empty-state">No generations yet. Click the button to start!</div>';
+        return;
+      }
+      list.innerHTML = generations.slice().reverse().map(g => {
+        const t = new Date(g.timestamp);
+        return `
+          <div class="history-item">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span class="badge">${g.number}</span>
+              <span>${t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <span class="time">${t.toLocaleDateString()}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderStats(generations) {
+      const counts = { 1: 0, 2: 0, 3: 0 };
+      generations.forEach(g => counts[g.number]++);
+      document.getElementById('count1').textContent = counts[1];
+      document.getElementById('count2').textContent = counts[2];
+      document.getElementById('count3').textContent = counts[3];
+
+      const ctx = document.getElementById('statsChart').getContext('2d');
+      const data = [counts[1], counts[2], counts[3]];
+      if (chart) {
+        chart.data.datasets[0].data = data;
+        chart.update();
+      } else {
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['1', '2', '3'],
+            datasets: [{
+              data,
+              backgroundColor: ['#60a5fa', '#a78bfa', '#ec4899'],
+              borderRadius: 8,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+          }
+        });
+      }
+    }
+
+    async function updateUI() {
+      const rows = await getAllGenerations();
+      renderHistory(rows);
+      renderStats(rows);
+    }
+
+    async function exportData() {
+      const rows = await getAllGenerations();
+      const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'random-number-history.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function clearData() {
+      if (!confirm('Clear all generation history?')) return;
+      await clearAllData();
+      document.getElementById('randomNumber').textContent = '-';
+      await updateUI();
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', generateNumber);
+    window.addEventListener('load', async () => {
+      try {
+        await initDB();
+        await updateUI();
+      } catch (error) {
+        console.error(error);
+        alert('IndexedDB not supported in this browser.');
+      }
+    });
+  </script>
+</body>
+</html>
