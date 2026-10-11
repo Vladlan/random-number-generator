@@ -332,7 +332,7 @@
       </div>
 
       <div class="card">
-        <h2>Analytics</h2>
+        <h2>Analytics - Left Behind</h2>
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-value" id="totalRounds">0</span>
@@ -343,8 +343,8 @@
             <span class="stat-label">Last Left</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" id="selectedCount">0</span>
-            <span class="stat-label">Total Picked</span>
+            <span class="stat-value" id="mostLeft">-</span>
+            <span class="stat-label">Most Left</span>
           </div>
         </div>
         <div class="chart-wrap"><canvas id="leftChart"></canvas></div>
@@ -496,13 +496,19 @@
       rounds.forEach(r => leftCounts[r.left]++);
 
       document.getElementById('totalRounds').textContent = rounds.length;
-      document.getElementById('selectedCount').textContent = rounds.length * 2;
 
       if (rounds.length > 0) {
         document.getElementById('currentLeft').textContent = rounds[rounds.length - 1].left;
       } else {
         document.getElementById('currentLeft').textContent = '-';
       }
+
+      // Find most left behind
+      const mostLeftNum = Object.keys(leftCounts).reduce((a, b) => 
+        leftCounts[a] > leftCounts[b] ? a : b
+      );
+      const mostLeftCount = leftCounts[mostLeftNum];
+      document.getElementById('mostLeft').textContent = mostLeftCount > 0 ? mostLeftNum : '-';
 
       const ctx = document.getElementById('leftChart');
       if (!ctx) return;
