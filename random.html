@@ -13,10 +13,10 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #0f172a, #1e293b);
       color: #0f172a;
-      padding: 24px;
+      padding: 16px;
     }
     .container {
-      max-width: 1100px;
+      max-width: 1400px;
       margin: 0 auto;
     }
     header {
@@ -25,11 +25,11 @@
       align-items: center;
       gap: 16px;
       flex-wrap: wrap;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     h1 {
       margin: 0;
-      font-size: clamp(2rem, 3vw, 3rem);
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
       background: linear-gradient(135deg, #60a5fa, #a78bfa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -43,58 +43,64 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 16px;
-      border-radius: 10px;
+      padding: 8px 14px;
+      border-radius: 8px;
       background: white;
       text-decoration: none;
       color: #0f172a;
       font-weight: 700;
+      font-size: 0.9rem;
     }
     .nav a.active {
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       color: white;
     }
-    .grid {
+    .generators-grid {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
     }
     .card {
       background: white;
-      border-radius: 16px;
-      padding: 24px;
+      border-radius: 12px;
+      padding: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
     .display-box {
-      min-height: 340px;
+      min-height: 180px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
       background: linear-gradient(135deg, #f0f9ff, #f5f3ff);
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
     }
     .display-label {
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      font-size: 0.65rem;
       color: #64748b;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .display-number {
-      font-size: clamp(4rem, 9vw, 7rem);
+      font-size: 3.5rem;
       font-weight: 900;
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       color: #2563eb;
+      line-height: 1;
     }
-    .display-number.pulse {
+    .display-sides {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #2563eb;
+      line-height: 1;
+    }
+    .display-number.pulse,
+    .display-sides.pulse {
       animation: pulse 0.25s ease;
     }
     @keyframes pulse {
@@ -105,12 +111,12 @@
     .btn {
       border: none;
       cursor: pointer;
-      border-radius: 10px;
-      padding: 14px 22px;
+      border-radius: 8px;
+      padding: 10px 16px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.85rem;
       transition: transform 0.15s ease;
-      margin-top: 16px;
+      width: 100%;
     }
     .btn:hover { transform: translateY(-1px); }
     .btn-primary {
@@ -123,48 +129,56 @@
       border: 1px solid #e2e8f0;
       color: #0f172a;
     }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.1rem;
+    }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .stat-card {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 14px 12px;
+      border-radius: 8px;
+      padding: 10px;
       text-align: center;
     }
     .stat-value {
       display: block;
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: #3b82f6;
     }
     .stat-label {
       display: block;
-      margin-top: 6px;
-      font-size: 0.75rem;
+      margin-top: 4px;
+      font-size: 0.65rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #64748b;
       font-weight: 700;
     }
-    .chart-wrap { height: 220px; }
+    .chart-wrap { 
+      height: 150px;
+      margin-bottom: 12px;
+    }
     .history-box {
-      max-height: 280px;
+      max-height: 180px;
       overflow-y: auto;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 0.8rem;
     }
     .history-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 10px;
+      padding: 8px 6px;
       border-bottom: 1px solid #e2e8f0;
     }
     .history-item:last-child { border-bottom: none; }
@@ -172,31 +186,33 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       background: #dbeafe;
       color: #1d4ed8;
       font-weight: 800;
+      font-size: 0.8rem;
     }
     .time {
       color: #64748b;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
     }
     .actions {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      margin-top: 12px;
     }
     .empty-state {
       text-align: center;
       color: #94a3b8;
-      padding: 26px 16px;
+      padding: 16px 10px;
+      font-size: 0.8rem;
     }
-    @media (max-width: 800px) {
-      .grid { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .generators-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -204,7 +220,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🎲 Random Number Generator</h1>
+      <h1>🎲 Random Generator</h1>
       <nav class="nav">
         <a href="index.html" class="active">Combined</a>
         <a href="random.html">Random Only</a>
@@ -212,17 +228,17 @@
       </nav>
     </header>
 
-    <div class="grid">
+    <div class="generators-grid">
+      <!-- Number Generator -->
       <div class="card">
+        <h2>Number Generator</h2>
         <div class="display-box">
           <div class="display-label">Generate</div>
           <div class="display-number" id="randomNumber">-</div>
-          <button class="btn btn-primary" id="generateBtn">Generate Number</button>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Statistics</h2>
+        <button class="btn btn-primary" id="generateBtn">Generate Number</button>
+        
+        <h3 style="margin: 12px 0 8px 0; font-size: 0.9rem;">Count Numbers</h3>
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-value" id="count1">0</span>
@@ -239,12 +255,35 @@
         </div>
         <div class="chart-wrap"><canvas id="statsChart"></canvas></div>
       </div>
+
+      <!-- Left/Right Generator -->
+      <div class="card">
+        <h2>Left/Right Generator</h2>
+        <div class="display-box">
+          <div class="display-label">Select</div>
+          <div class="display-sides" id="sidesResult">-</div>
+        </div>
+        <button class="btn btn-primary" id="generateSidesBtn">Generate Choice</button>
+        
+        <h3 style="margin: 12px 0 8px 0; font-size: 0.9rem;">Count Choices</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="countLeft">0</span>
+            <span class="stat-label">Left</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="countRight">0</span>
+            <span class="stat-label">Right</span>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="sidesChart"></canvas></div>
+      </div>
     </div>
 
     <div class="card">
       <h2>Generation History</h2>
       <div class="history-box" id="logList">
-        <div class="empty-state">No generations yet. Click the button to start!</div>
+        <div class="empty-state">No generations yet. Click a button to start!</div>
       </div>
       <div class="actions">
         <button class="btn btn-secondary" onclick="exportData()">Export Data</button>
@@ -255,17 +294,22 @@
 
   <script>
     const DB_NAME = 'NumberGeneratorDB';
-    const STORE = 'generations';
+    const STORE_NUMBERS = 'generations';
+    const STORE_SIDES = 'sidesGenerations';
     let db;
-    let chart;
+    let chartNumbers;
+    let chartSides;
 
     function initDB() {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
+        const request = indexedDB.open(DB_NAME, 2);
         request.onupgradeneeded = (event) => {
           const database = event.target.result;
-          if (!database.objectStoreNames.contains(STORE)) {
-            database.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+          if (!database.objectStoreNames.contains(STORE_NUMBERS)) {
+            database.createObjectStore(STORE_NUMBERS, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!database.objectStoreNames.contains(STORE_SIDES)) {
+            database.createObjectStore(STORE_SIDES, { keyPath: 'id', autoIncrement: true });
           }
         };
         request.onsuccess = () => {
@@ -276,32 +320,32 @@
       });
     }
 
-    function addGeneration(number) {
+    function addGeneration(store, data) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction([STORE], 'readwrite');
-        const store = tx.objectStore(STORE);
-        const record = { number, timestamp: new Date().toISOString() };
-        const req = store.add(record);
+        const tx = db.transaction([store], 'readwrite');
+        const st = tx.objectStore(store);
+        const record = { ...data, timestamp: new Date().toISOString() };
+        const req = st.add(record);
         req.onsuccess = () => resolve(record);
         req.onerror = () => reject(req.error);
       });
     }
 
-    function getAllGenerations() {
+    function getAllGenerations(store) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction([STORE], 'readonly');
-        const store = tx.objectStore(STORE);
-        const req = store.getAll();
+        const tx = db.transaction([store], 'readonly');
+        const st = tx.objectStore(store);
+        const req = st.getAll();
         req.onsuccess = () => resolve(req.result || []);
         req.onerror = () => reject(req.error);
       });
     }
 
-    function clearAllData() {
+    function clearAllData(store) {
       return new Promise((resolve, reject) => {
-        const tx = db.transaction([STORE], 'readwrite');
-        const store = tx.objectStore(STORE);
-        const req = store.clear();
+        const tx = db.transaction([store], 'readwrite');
+        const st = tx.objectStore(store);
+        const req = st.clear();
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
       });
@@ -314,22 +358,39 @@
       display.classList.remove('pulse');
       void display.offsetWidth;
       display.classList.add('pulse');
-      await addGeneration(number);
+      await addGeneration(STORE_NUMBERS, { number });
       await updateUI();
     }
 
-    function renderHistory(generations) {
+    async function generateSides() {
+      const choice = Math.random() < 0.5 ? 'Left' : 'Right';
+      const display = document.getElementById('sidesResult');
+      display.textContent = choice;
+      display.classList.remove('pulse');
+      void display.offsetWidth;
+      display.classList.add('pulse');
+      await addGeneration(STORE_SIDES, { choice });
+      await updateUI();
+    }
+
+    function renderHistory(generations, sidesGenerations) {
       const list = document.getElementById('logList');
-      if (!generations.length) {
-        list.innerHTML = '<div class="empty-state">No generations yet. Click the button to start!</div>';
+      const all = [
+        ...generations.map(g => ({ type: 'number', value: g.number, timestamp: g.timestamp })),
+        ...sidesGenerations.map(s => ({ type: 'sides', value: s.choice, timestamp: s.timestamp }))
+      ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 30);
+
+      if (!all.length) {
+        list.innerHTML = '<div class="empty-state">No generations yet. Click a button to start!</div>';
         return;
       }
-      list.innerHTML = generations.slice().reverse().map(g => {
-        const t = new Date(g.timestamp);
+
+      list.innerHTML = all.map(item => {
+        const t = new Date(item.timestamp);
         return `
           <div class="history-item">
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span class="badge">${g.number}</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge">${item.type === 'number' ? item.value : (item.value === 'Left' ? 'L' : 'R')}</span>
               <span>${t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
             <span class="time">${t.toLocaleDateString()}</span>
@@ -338,65 +399,111 @@
       }).join('');
     }
 
-    function renderStats(generations) {
+    async function renderStats() {
+      const generations = await getAllGenerations(STORE_NUMBERS);
+      const sidesGenerations = await getAllGenerations(STORE_SIDES);
+
+      // Numbers stats
       const counts = { 1: 0, 2: 0, 3: 0 };
       generations.forEach(g => counts[g.number]++);
       document.getElementById('count1').textContent = counts[1];
       document.getElementById('count2').textContent = counts[2];
       document.getElementById('count3').textContent = counts[3];
 
-      const ctx = document.getElementById('statsChart').getContext('2d');
-      const data = [counts[1], counts[2], counts[3]];
-      if (chart) {
-        chart.data.datasets[0].data = data;
-        chart.update();
-      } else {
-        chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['1', '2', '3'],
-            datasets: [{
-              data,
-              backgroundColor: ['#60a5fa', '#a78bfa', '#ec4899'],
-              borderRadius: 8,
-              borderSkipped: false
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-          }
-        });
+      const ctx = document.getElementById('statsChart');
+      if (ctx) {
+        const data = [counts[1], counts[2], counts[3]];
+        if (chartNumbers) {
+          chartNumbers.data.datasets[0].data = data;
+          chartNumbers.update();
+        } else {
+          chartNumbers = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['1', '2', '3'],
+              datasets: [{
+                data,
+                backgroundColor: ['#60a5fa', '#a78bfa', '#ec4899'],
+                borderRadius: 6,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+          });
+        }
+      }
+
+      // Sides stats
+      const sidesCounts = { 'Left': 0, 'Right': 0 };
+      sidesGenerations.forEach(s => sidesCounts[s.choice]++);
+      document.getElementById('countLeft').textContent = sidesCounts['Left'];
+      document.getElementById('countRight').textContent = sidesCounts['Right'];
+
+      const ctxSides = document.getElementById('sidesChart');
+      if (ctxSides) {
+        const dataSides = [sidesCounts['Left'], sidesCounts['Right']];
+        if (chartSides) {
+          chartSides.data.datasets[0].data = dataSides;
+          chartSides.update();
+        } else {
+          chartSides = new Chart(ctxSides, {
+            type: 'bar',
+            data: {
+              labels: ['Left', 'Right'],
+              datasets: [{
+                data: dataSides,
+                backgroundColor: ['#60a5fa', '#ec4899'],
+                borderRadius: 6,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+          });
+        }
       }
     }
 
     async function updateUI() {
-      const rows = await getAllGenerations();
-      renderHistory(rows);
-      renderStats(rows);
+      const rows = await getAllGenerations(STORE_NUMBERS);
+      const sidesRows = await getAllGenerations(STORE_SIDES);
+      renderHistory(rows, sidesRows);
+      await renderStats();
     }
 
     async function exportData() {
-      const rows = await getAllGenerations();
-      const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+      const numbers = await getAllGenerations(STORE_NUMBERS);
+      const sides = await getAllGenerations(STORE_SIDES);
+      const blob = new Blob([JSON.stringify({ numbers, sides }, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'random-number-history.json';
+      a.download = 'random-generator-history.json';
       a.click();
       URL.revokeObjectURL(url);
     }
 
     async function clearData() {
       if (!confirm('Clear all generation history?')) return;
-      await clearAllData();
+      await clearAllData(STORE_NUMBERS);
+      await clearAllData(STORE_SIDES);
       document.getElementById('randomNumber').textContent = '-';
+      document.getElementById('sidesResult').textContent = '-';
       await updateUI();
     }
 
     document.getElementById('generateBtn').addEventListener('click', generateNumber);
+    document.getElementById('generateSidesBtn').addEventListener('click', generateSides);
+
     window.addEventListener('load', async () => {
       try {
         await initDB();
