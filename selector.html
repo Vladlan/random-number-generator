@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remaining Number Selector</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg1: #0f172a;
+      --bg2: #1e293b;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --purple: #7c3aed;
+      --success: #10b981;
+      --soft: #f8fafc;
+      --line: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: min(1100px, 100%);
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      color: white;
+      font-size: clamp(1.8rem, 2.5vw, 3rem);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      color: white;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid #e2e8f0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .pick-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 340px;
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    .label {
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .selected-number {
+      font-size: clamp(4rem, 10vw, 8rem);
+      font-weight: 900;
+      color: var(--primary);
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 12px 0 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .selected-number.pulse { transform: scale(1.12); }
+
+    .remaining-wrap {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+
+    .chip.empty {
+      background: #f1f5f9;
+      color: var(--muted);
+      min-width: 150px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .stat-name {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .chart-box {
+      height: 260px;
+      margin-top: 16px;
+    }
+
+    .history-list {
+      max-height: 320px;
+      overflow-y: auto;
+      margin-top: 14px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      padding: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.96rem;
+    }
+
+    .history-item:last-child { border-bottom: none; }
+
+    .history-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 10px;
+      min-width: 32px;
+      height: 32px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+    }
+
+    .history-time {
+      color: var(--muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      padding: 26px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>Remaining Number Selector</h1>
+      <button class="btn btn-secondary" id="resetBtn">Reset Current Round</button>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="pick-box">
+          <div class="label">Selected</div>
+          <div class="selected-number" id="selectedNumber">—</div>
+
+          <button class="btn btn-primary" id="pickBtn">Select a Number</button>
+
+          <div class="remaining-wrap">
+            <div class="label" style="margin: 18px 0 0; width: 100%;">Remaining</div>
+            <div id="remainingNumbers"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="stats">
+          <div class="stat-box">
+            <div class="stat-value" id="totalSelections">0</div>
+            <div class="stat-name">Selections</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="currentRound">0</div>
+            <div class="stat-name">This Round</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" id="leftCount">3</div>
+            <div class="stat-name">Left</div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <canvas id="analyticsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top: 24px;">
+      <div class="label">History</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+
+  <script>
+    const DB_NAME = 'RemainingNumberSelectorDB';
+    const SELECTION_STORE = 'selections';
+    const ROUND_STORE = 'currentRound';
+
+    let db;
+    let chart;
+    let remaining = [1, 2, 3];
+    let currentSelected = null;
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+
+        request.onupgradeneeded = (event) => {
+          const database = event.target.result;
+          if (!database.objectStoreNames.contains(SELECTION_STORE)) {
+            database.createObjectStore(SELECTION_STORE, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!database.objectStoreNames.contains(ROUND_STORE)) {
+            database.createObjectStore(ROUND_STORE, { keyPath: 'key' });
+          }
+        };
+
+        request.onsuccess = () => {
+          db = request.result;
+          resolve();
+        };
+
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function saveSelection(selected, remainingAfter) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(SELECTION_STORE, 'readwrite');
+        const store = tx.objectStore(SELECTION_STORE);
+        const record = {
+          selected,
+          remainingAfter: remainingAfter.slice(),
+          timestamp: new Date().toISOString()
+        };
+
+        const request = store.add(record);
+        request.onsuccess = () => resolve(record);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function saveRoundState() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(ROUND_STORE, 'readwrite');
+        const store = tx.objectStore(ROUND_STORE);
+        const request = store.put({ key: 'currentState', remaining: remaining.slice() });
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function loadRoundState() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(ROUND_STORE, 'readonly');
+        const store = tx.objectStore(ROUND_STORE);
+        const request = store.get('currentState');
+        request.onsuccess = () => resolve(request.result ? request.result.remaining : [1, 2, 3]);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function getAllSelections() {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(SELECTION_STORE, 'readonly');
+        const store = tx.objectStore(SELECTION_STORE);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function clearCurrentRound() {
+      remaining = [1, 2, 3];
+      currentSelected = null;
+      return saveRoundState();
+    }
+
+    function renderRemaining() {
+      const el = document.getElementById('remainingNumbers');
+      if (!remaining.length) {
+        el.innerHTML = '<span class="chip empty">No numbers left</span>';
+        return;
+      }
+      el.innerHTML = remaining.map(n => `<span class="chip">${n}</span>`).join('');
+    }
+
+    function renderSelected() {
+      const el = document.getElementById('selectedNumber');
+      if (currentSelected === null) {
+        el.textContent = '—';
+        el.classList.remove('pulse');
+        return;
+      }
+      el.textContent = currentSelected;
+      el.classList.remove('pulse');
+      void el.offsetWidth;
+      el.classList.add('pulse');
+    }
+
+    function renderStats(history) {
+      const counts = { 1: 0, 2: 0, 3: 0 };
+      history.forEach(item => counts[item.selected]++);
+
+      document.getElementById('totalSelections').textContent = history.length;
+      document.getElementById('currentRound').textContent = remaining.length === 0 ? 0 : (3 - remaining.length);
+      document.getElementById('leftCount').textContent = remaining.length;
+
+      const ctx = document.getElementById('analyticsChart').getContext('2d');
+      const data = [counts[1], counts[2], counts[3]];
+
+      if (chart) {
+        chart.data.datasets[0].data = data;
+        chart.update();
+      } else {
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['1', '2', '3'],
+            datasets: [{
+              label: 'All-time selections',
+              data,
+              backgroundColor: ['#60a5fa', '#a78bfa', '#34d399'],
+              borderRadius: 10
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+          }
+        });
+      }
+    }
+
+    function renderHistory(history) {
+      const list = document.getElementById('historyList');
+      if (!history.length) {
+        list.innerHTML = '<div class="empty-state">No selections yet.</div>';
+        return;
+      }
+
+      list.innerHTML = history
+        .slice()
+        .reverse()
+        .map(item => {
+          const date = new Date(item.timestamp);
+          const leftText = item.remainingAfter.length ? item.remainingAfter.join(', ') : 'None left';
+          return `
+            <div class="history-item">
+              <div class="history-left">
+                <span class="badge">${item.selected}</span>
+                <div>
+                  <div>Selected: <strong>${item.selected}</strong></div>
+                  <div style="color: var(--muted); font-size: 0.8rem;">Left: ${leftText}</div>
+                </div>
+              </div>
+              <div class="history-time">${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    async function refreshUI() {
+      const history = await getAllSelections();
+      renderRemaining();
+      renderSelected();
+      renderStats(history);
+      renderHistory(history);
+    }
+
+    async function pickNumber() {
+      if (remaining.length === 0) {
+        currentSelected = null;
+        renderSelected();
+        alert('All numbers used. Reset the round to start again.');
+        return;
+      }
+
+      const index = Math.floor(Math.random() * remaining.length);
+      const chosen = remaining[index];
+      currentSelected = chosen;
+
+      const remainingAfter = remaining.filter(n => n !== chosen);
+      remaining = remainingAfter;
+
+      await saveSelection(chosen, remainingAfter);
+      await saveRoundState();
+      await refreshUI();
+    }
+
+    async function resetRound() {
+      await clearCurrentRound();
+      await refreshUI();
+    }
+
+    document.getElementById('pickBtn').addEventListener('click', pickNumber);
+    document.getElementById('resetBtn').addEventListener('click', resetRound);
+
+    window.addEventListener('load', async () => {
+      try {
+        await openDB();
+        const saved = await loadRoundState();
+        remaining = saved || [1, 2, 3];
+        await refreshUI();
+      } catch (error) {
+        console.error('DB init error:', error);
+        alert('IndexedDB is not available in this browser.');
+      }
+    });
+  </script>
+</body>
+</html>
